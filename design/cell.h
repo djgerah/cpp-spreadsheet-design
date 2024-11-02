@@ -2,10 +2,8 @@
 
 #include "common.h"
 #include "formula.h"
-#include <memory>
-#include <string>
-#include <string_view>
-#include <variant>
+
+#include <functional>
 #include <optional>
 #include <unordered_set>
 
@@ -13,14 +11,14 @@ class Cell : public CellInterface
 {
     public:
 
-        Cell();
+        Cell(Sheet& sheet);
         ~Cell();
 
-        void Set(std::string text) override;
+        void Set(std::string text);
         void Clear();
-
         Value GetValue() const override;
         std::string GetText() const override;
+        bool IsReferenced() const;
         std::vector<Position> GetReferencedCells() const override;
 
     private:
@@ -30,28 +28,15 @@ class Cell : public CellInterface
         class TextImpl;
         class FormulaImpl;
 
-        bool IsCircularDependency(const Impl& impl) const;
-        void InvalidateCache();
+    // Добавьте поля и методы для связи с таблицей, проверки циклических 
+    // зависимостей, графа зависимостей и т. д.
+    bool IsCircularDependency(const Impl& impl) const;
+    void InvalidateCache();
 
-        std::unique_ptr<Impl> impl_;
-        SheetInterface& sheet_;
-        
-        struct CellHasher
-        {
-            size_t operator()(const Cell* cell) const 
-            {
-                return cell_hasher(std::get<double>(cell->GetValue()));
-            }
-
-            private:
-
-            std::hash<double> cell_hasher;
-        };
-
-        // Контейнер указателей ячеек, на которые ссылается данная ячейка (поиск циклических зависимостей)
-        std::unordered_set<Cell*, CellHasher> referenced_to_;
-        // Контейнер указателей ячеек, которые ссылается на данную ячейку (инвалидация кеша)
-        std::unordered_set<Cell*, CellHasher> referenced_by_;
-        // Если кэш валидный, optional хранит Value
-        mutable std::optional<FormulaInterface::Value> cache_;
+    Sheet& sheet_;
+    std::unique_ptr<Impl> impl_;
+    // Контейнер указателей ячеек, на которые ссылается данная ячейка (поиск циклических зависимостей)
+    std::unordered_set<Cell*> referenced_to_;
+    // Контейнер указателей ячеек, которые ссылается на данную ячейку (инвалидация кеша)
+    std::unordered_set<Cell*> referenced_by_;
 };
