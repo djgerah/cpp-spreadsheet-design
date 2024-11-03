@@ -28,15 +28,15 @@ class Cell : public CellInterface
         class TextImpl;
         class FormulaImpl;
 
-    // Добавьте поля и методы для связи с таблицей, проверки циклических 
-    // зависимостей, графа зависимостей и т. д.
-    bool IsCircularDependency(const Impl& impl) const;
-    void InvalidateCache();
-
-    Sheet& sheet_;
-    std::unique_ptr<Impl> impl_;
-    // Контейнер указателей ячеек, на которые ссылается данная ячейка (поиск циклических зависимостей)
-    std::unordered_set<Cell*> referenced_to_;
-    // Контейнер указателей ячеек, которые ссылается на данную ячейку (инвалидация кеша)
-    std::unordered_set<Cell*> referenced_by_;
+        // Добавьте поля и методы для связи с таблицей, проверки циклических 
+        // зависимостей, графа зависимостей и т. д.
+        bool IsCircularDependency(const Impl& impl) const;
+        void InvalidateCache();
+    
+        Sheet& sheet_;
+        std::unique_ptr<Impl> impl_;
+        // Контейнер указателей ячеек, на которые ссылается данная ячейка (поиск циклических зависимостей)
+        std::unordered_set<Cell*> referenced_to_;
+        // Контейнер указателей ячеек, которые ссылается на данную ячейку (инвалидация кеша)
+        std::unordered_set<Cell*> referenced_by_;
 };
