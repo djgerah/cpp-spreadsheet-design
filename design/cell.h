@@ -31,12 +31,14 @@ class Cell : public CellInterface
         // Добавьте поля и методы для связи с таблицей, проверки циклических 
         // зависимостей, графа зависимостей и т. д.
         bool IsCircularDependency(const Impl& impl) const;
+        void UpdateDependence();
         void InvalidateCache();
     
-        Sheet& sheet_;
         std::unique_ptr<Impl> impl_;
-        // Контейнер указателей ячеек, на которые ссылается данная ячейка (поиск циклических зависимостей)
+        Sheet& sheet_;
+
+        // Контейнер указателей ячеек, на которые ссылается данная ячейка l_nodes (поиск циклических зависимостей)
         std::unordered_set<Cell*> referenced_to_;
-        // Контейнер указателей ячеек, которые ссылается на данную ячейку (инвалидация кеша)
+        // Контейнер указателей ячеек, которые ссылается на данную ячейку r_nodes (инвалидация кеша)
         std::unordered_set<Cell*> referenced_by_;
 };
